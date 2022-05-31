@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:49:57
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-30 21:47:09
+ * @LastEditTime: 2022-05-31 09:33:26
 -->
 <script setup lang="ts">
 
@@ -28,8 +28,9 @@
             <span class="text-white ml-3">admin</span>
           </div>
           <template #dropdown>
-            <el-dropdown-menu class="w-18">
+            <el-dropdown-menu>
               <el-dropdown-item><span @click="$router.push('/manage');">首页</span></el-dropdown-item>
+              <el-dropdown-item><span @click="$router.push('/edit');">编辑</span></el-dropdown-item>
               <el-dropdown-item><span @click="$router.push('/login');">退出</span></el-dropdown-item>
             </el-dropdown-menu>
           </template>

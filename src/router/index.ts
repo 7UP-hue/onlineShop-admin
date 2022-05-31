@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:06:27
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-30 20:55:56
+ * @LastEditTime: 2022-05-31 10:11:47
  */
 import { HomeFilled } from '@element-plus/icons-vue/dist/types'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
@@ -12,13 +12,19 @@ import mainPage from '@/pages/home.vue'
 import orderList from '@/pages/orderList/index.vue'
 import shopList from '@/pages/shopList/index.vue'
 import addShop from '@/pages/addShop/index.vue'
-import edit from '@/pages/addShop/index.vue'
+import editUser from '@/pages/edit/index.vue'
+import editShop from '@/pages/edit/editShop.vue'
+import login from '@/pages/login.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '',
     redirect: (_) => {
-      return { path: '/home' }
+      return { path: '/login' }
     },
+  },
+  {
+    path: '/login',
+    component: login
   },
   {
     path: '/home',
@@ -51,10 +57,17 @@ const routes: Array<RouteRecordRaw> = [
         }
       },
       {
-        path: '/edit',
-        component: edit,
+        path: '/editUser',
+        component: editUser,
         meta: {
           title: ['编辑', '用户管理']
+        }
+      },
+      {
+        path: '/editShop',
+        component: editShop,
+        meta: {
+          title: ['编辑', '店铺管理']
         }
       }
     ]

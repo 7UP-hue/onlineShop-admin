@@ -4,7 +4,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:36
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-30 21:50:26
+ * @LastEditTime: 2022-05-31 10:27:14
 -->
 <script setup lang="ts">
   import { ref } from 'vue'
@@ -29,7 +29,7 @@
         :collapse="isCollapse"
         router
       >
-        <el-menu-item index="/">
+        <el-menu-item index="/home">
           <el-icon><Menu /></el-icon>首页
         </el-menu-item>
         <el-sub-menu index="2">
@@ -60,8 +60,11 @@
             <el-icon><Edit /></el-icon>编辑
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/edit">
+            <el-menu-item index="/editUser">
               用户管理
+            </el-menu-item>
+            <el-menu-item index="/editShop">
+              店铺管理
             </el-menu-item>
           </el-menu-item-group>
         </el-sub-menu>

@@ -3,9 +3,10 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-31 09:25:30
+ * @LastEditTime: 2022-05-31 10:02:06
 -->
 <script setup lang="ts">
+import { ref } from 'vue'
 import myHeader from '@/components/header.vue'
 const tableData = [
   {
@@ -58,6 +59,14 @@ const tableData = [
     sales: 158
   }
 ]
+const showDialog = ref(false)
+const editDialog = ref(false)
+const editForm = ref({
+  proName:'',
+  stock: '',
+  price: '',
+  proDesc: ''
+})
 </script>
 
 <template>
@@ -106,12 +115,47 @@ const tableData = [
           <el-table-column prop="stock" label="库存量" align="center"></el-table-column>
           <el-table-column prop="action" label="操作" align="center">
             <template #default>
-              <el-button type="primary" size="small"><el-icon><edit /></el-icon></el-button>
-              <el-button type="danger" size="small"><el-icon><delete /></el-icon></el-button>
+              <el-button type="primary" size="small" @click="editDialog=true"><el-icon><edit /></el-icon></el-button>
+              <el-button type="danger" size="small" @click="showDialog=true">
+                <el-icon><delete /></el-icon>
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
       </div>
+      <el-dialog v-model="showDialog" width="30%">
+        确定要删除此商品吗？
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="showDialog = false">取消</el-button>
+            <el-button type="primary" @click="showDialog = false"
+              >确定</el-button
+            >
+          </span>
+        </template>
+      </el-dialog>
+      <el-dialog v-model="editDialog" width="50%">
+        <div class="py-5 pr-5">
+          <el-form :model="editForm" label-width="100px">
+            <el-form-item label="商品名">
+              <el-input v-model="editForm.proName" />
+            </el-form-item>
+            <el-form-item label="商品库存量">
+              <el-input v-model="editForm.stock" />
+            </el-form-item>
+            <el-form-item label="商品价格">
+              <el-input v-model="editForm.price" />
+            </el-form-item>
+            <el-form-item label="商品描述">
+              <el-input v-model="editForm.proDesc" type="textarea" />
+            </el-form-item>
+             <el-form-item>
+              <el-button type="primary" @click="editDialog = false">确定</el-button>
+              <el-button @click="editDialog = false">取消</el-button>
+            </el-form-item>
+          </el-form>
+        </div>
+      </el-dialog>
     </div>
   </div>
 </template>
