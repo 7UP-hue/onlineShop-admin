@@ -3,17 +3,27 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-31 09:36:10
+ * @LastEditTime: 2022-06-02 11:29:59
 -->
 <script setup lang="ts">
 import myHeader from '@/components/header.vue'
+import { saveProduct } from '@/api/product'
 import { ref,reactive } from 'vue'
+import axios from 'axios'
 const addForm = reactive({
   proName:'',
   stock: '',
   price: '',
   proDesc: ''
 })
+const addProduct = () => {
+  console.log(addForm)
+  saveProduct(addForm).then((res) => {
+    if(res.code === 200) {
+      console.log('新增成功')
+    }
+  })
+}
 </script>
 
 <template>
@@ -41,7 +51,7 @@ const addForm = reactive({
             <el-input v-model="addForm.proDesc" type="textarea" />
           </el-form-item>
            <el-form-item>
-            <el-button type="primary" @click="onSubmit">添加</el-button>
+            <el-button type="primary" @click="addProduct">添加</el-button>
             <el-button>取消</el-button>
           </el-form-item>
         </el-form>

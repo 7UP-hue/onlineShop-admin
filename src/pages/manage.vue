@@ -4,7 +4,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:36
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-31 10:27:14
+ * @LastEditTime: 2022-06-01 11:13:11
 -->
 <script setup lang="ts">
   import { ref } from 'vue'
@@ -60,9 +60,6 @@
             <el-icon><Edit /></el-icon>编辑
           </template>
           <el-menu-item-group>
-            <el-menu-item index="/editUser">
-              用户管理
-            </el-menu-item>
             <el-menu-item index="/editShop">
               店铺管理
             </el-menu-item>

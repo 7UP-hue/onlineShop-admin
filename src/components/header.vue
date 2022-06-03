@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:49:57
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-31 09:33:26
+ * @LastEditTime: 2022-06-02 14:23:51
 -->
 <script setup lang="ts">
 
@@ -11,7 +11,7 @@
 <template>
   <div
     class="h-60px"
-    style="position: fixed; top: 0;left: 0; width: 100%; z-index:100;"
+    style="position: fixed; top: 0;left: 0; width: 100%; z-index:100; min-width: 1024px"
   >
     <div class="ml-240px h-60px flex justify-between items-center text-white px-3" style="background: rgba(28,43,54,.9);">
       <el-breadcrumb separator-class="el-icon-arrow-right">
@@ -23,8 +23,8 @@
             </el-breadcrumb-item>
        </el-breadcrumb>
       <el-dropdown class="mr-5">
-          <div style="display: flex;align-items: center;">
-            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+          <div style="display: flex;align-items: center">
+            <el-avatar src="src/assets/toux2.jpeg"></el-avatar>
             <span class="text-white ml-3">admin</span>
           </div>
           <template #dropdown>

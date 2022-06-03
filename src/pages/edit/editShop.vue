@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-05-31 09:45:00
+ * @LastEditTime: 2022-06-02 10:35:38
 -->
 <script setup lang="ts">
 import myHeader from '@/components/header.vue'
@@ -30,6 +30,9 @@ const editForm = reactive({
         <el-form :model="addForm" label-width="100px">
           <el-form-item label="店铺名">
             <el-input v-model="editForm.shopName" />
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input v-model="editForm.shopPsd" />
           </el-form-item>
           <el-form-item label="联系方式">
             <el-input v-model="editForm.phoneNumber" />

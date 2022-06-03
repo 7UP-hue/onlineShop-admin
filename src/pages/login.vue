@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
-import type { FormInstance, ElMessage } from 'element-plus'
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import { userLogin } from '@/api/user'
 //重置文本框
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
@@ -8,8 +10,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 const loginFormdata = ref({
   username: '',
-  password: '',
-  code: ''
+  password: ''
 })
 const ruleFormRef = ref<FormInstance>()
 const login = async(formEl: FormInstance | undefined) => {
@@ -18,7 +19,11 @@ const login = async(formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     //校验成功
     if(valid) {
-      
+      // userLogin(loginFormdata).then((res: any) => {
+      //   if(res.code === 200) {
+          
+      //   }
+      // })
     }
   })
   
@@ -68,7 +73,6 @@ const changeArm = (flag: number) =>  {
             <el-input @focus="changeArm(1)" @blur="changeArm(0)" v-model.trim="loginFormdata.password" placeholder="密码" :prefix-icon="Unlock" type="password" show-password />
           </el-form-item>
           <div>
-            <el-button type="text" @click="this.$router.push('/register')">还没有账号？点此注册</el-button>
             <el-button type="primary" @click="login(ruleFormRef)">登录</el-button>
             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
           </div>
