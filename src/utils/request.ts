@@ -3,14 +3,16 @@
  * @Author: 刘晴
  * @Date: 2022-06-02 11:21:30
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-02 11:35:36
+ * @LastEditTime: 2022-06-03 20:57:04
  */
 // 封装axios
 import axios from 'axios';
 import store from '@/store'
 // import { Message } from 'element-ui';
+import { ElMessage } from 'element-plus'
 import { servicesVersion } from 'typescript';
 import { getToken, removeToken, removeRoles, removeName, removeAvatar } from './cookies'
+import router from '@/router';
 // 创建axios实例
 const service = axios.create({
     // 请求路由
@@ -21,8 +23,8 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     (config: any) => {
-        const token = store.getters.userInfo.token;
-        if(token) config.headers["X-Token"] = token;
+        const token = getToken();
+        if(token) config.headers["Authorization"] = token;
         return config;
     },
     (error) => {
@@ -33,6 +35,13 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response) => {
         const res = response.data;
+        if(res.code === 500 ) {
+            ElMessage({
+                message: '身份验证失败',
+                type: "error"
+            })
+            router.push("/login")
+        }
         return res;
     },
     (error) => {

@@ -4,7 +4,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:36
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-01 11:13:11
+ * @LastEditTime: 2022-06-03 21:02:53
 -->
 <script setup lang="ts">
   import { ref } from 'vue'
@@ -16,7 +16,7 @@
 
 <template>
   <div>
-    <el-aside class="min-h-100vh w-240px" style="position: fixed">
+    <el-aside class="min-h-100vh" style="position: fixed; width: 240px">
       <div
         class="text-xl text-hex-209E91 font-bold h-60px leading-60px"
         style="background-color: #1C2B36"
