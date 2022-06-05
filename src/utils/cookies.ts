@@ -3,11 +3,11 @@
  * @Author: 刘晴
  * @Date: 2022-06-02 11:22:33
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-02 11:24:01
+ * @LastEditTime: 2022-06-05 14:56:10
  */
 import Cookies from 'js-cookie'
 
-const TokenKey = 'token'
+const TokenKey = 'Ttoken'
 const RoleKey = 'roles'
 const nameKey = 'name'
 const avatarKey = 'avatar'

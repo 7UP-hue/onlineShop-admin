@@ -3,12 +3,14 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-02 15:42:12
+ * @LastEditTime: 2022-06-05 16:43:22
 -->
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import myHeader from '@/components/header.vue'
-import { getProduct } from '@/api/product'
+import { getProduct, updateProduct } from '@/api/product'
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
 interface ProductList {
   proId: String,
   proName: String,
@@ -17,21 +19,22 @@ interface ProductList {
   createTime: String,
   stock: Number,
   sales: Number,
-  proDesc: String
+  proDesc: String,
+  imgUrl: String
 }
 const tableData: Array<ProductList> = reactive([])
 const showDialog = ref(false)
 const editDialog = ref(false)
-const editForm = ref({
+const editForm = reactive({
   proName:'',
   stock: '',
   price: '',
-  proDesc: ''
+  proDesc: '',
+  proId: ''
 })
 const searchQuery = reactive({
-    shopId: 'SD00001',
     pageNum: 1,
-    pageSize: 7,
+    pageSize: 10,
     proName: '',
     proId: '',
     createTime: ''
@@ -69,6 +72,69 @@ const cancel = () => {
   choType.value = 'proName'
   searchValue.value = ''
   Search()
+}
+const editProduct = (val: any) => {
+  editDialog.value = true
+  editForm.proName = val.proName
+  editForm.price = val.price
+  editForm.stock = val.stock
+  editForm.proDesc = val.proDesc
+  editForm.proId = val.proId
+}
+const checkPrice = (rule: any, value: any, callback: any) => {
+  if(value === '') {
+    callback(new Error('请输入商品价格'))
+  } else {
+    if(!/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/.test(value)) {
+      callback(new Error('请输入正确的价格'))
+    } else {
+      callback()
+    }
+  }
+}
+const checkStock = (rule: any, value: any, callback: any) => {
+  if(value === '') {
+    callback(new Error('请输入商品库存量'))
+  } else {
+    if(!/^[0-9]*$/.test(value)) {
+      callback(new Error('请输入正整数'))
+    } else {
+      callback()
+    }
+  }
+}
+const ruleFormRef = ref<FormInstance>()
+const rules = reactive({
+  proName: [
+    {required: true, message: '商品名不能为空！', trigger: 'blur'}
+  ],
+  stock: [{ validator: checkStock, trigger: 'blur' }],
+  price: [{ validator: checkPrice, trigger: 'blur' }]
+})
+const onSubmit = async(formEl: FormInstance | undefined) => {
+  if(!formEl) return
+  await formEl.validate((valid, fields) => {
+    if(valid) {
+      console.log(editForm)
+      updateProduct(editForm).then((res: any)=> {
+        if(res.code === 200) {
+          ElMessage({
+            message: '编辑成功',
+            type: 'success'
+          })
+          editDialog.value = false
+        } else {
+          ElMessage({
+            message: '编辑失败',
+            type: 'error'
+          })
+        }
+      }) 
+    }
+  })
+}
+const onCancel = () => {
+  editDialog.value = false
 }
 onMounted(() => {
   getProList()
@@ -110,21 +176,29 @@ onMounted(() => {
                   <span class="mr-20">价格：{{props.row.price}}</span>
                   <span>销量：{{props.row.sales}}</span>
                 </div>
-                <div class="mt-3">版型款式</div>
-                <div>
-                  <span class="mr-5">袖长：短袖</span>
-                  <span class="mr-5">领型：圆领</span>
-                  <span>版型：标准</span>
-                </div>
-                <div class="mt-3">关键信息</div>
-                <div>
-                  <span class="mr-5">上市时间：{{props.row.createTime}}</span>
-                  <span class="mr-5">厚薄：常规</span>
-                  <span class="mr-5">材质成分：棉100%</span>
-                  <span class="mr-5">品牌：优衣库</span>
-                </div>
-                <div>
-                  <span class="mr-5">描述：{{props.row.proDEsc}}</span>
+                <div class="flex mt-3">
+                  <div>
+                    <span>商品图片</span>
+                    <img :src="props.row.imgUrl">
+                  </div>
+                  <div class="mr-5">
+                    <div>版型款式</div>
+                    <div>
+                      <span>袖长：短袖</span>
+                      <span class="ml-5">领型：圆领</span>
+                      <span class="ml-5">版型：标准</span>
+                    </div>
+                    <div class="mt-3">关键信息</div>
+                    <div>
+                      <div class="mt-1">上市时间：{{props.row.createTime}}</div>
+                      <div class="mt-1">厚薄：常规</div>
+                      <div class="mt-1">材质成分：棉100%</div>
+                      <div class="mt-1">品牌：优衣库</div>
+                    </div>
+                    <div class="mt-1">
+                      <span>描述：{{props.row.proDEsc}}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </template>
@@ -133,8 +207,8 @@ onMounted(() => {
           <el-table-column prop="proName" label="商品名" align="center"></el-table-column>
           <el-table-column prop="stock" label="库存量" align="center"></el-table-column>
           <el-table-column prop="action" label="操作" align="center">
-            <template #default>
-              <el-button type="primary" size="small" @click="editDialog=true"><el-icon><edit /></el-icon></el-button>
+            <template #default="scope">
+              <el-button type="primary" size="small" @click="editProduct(scope.row)"><el-icon><edit /></el-icon></el-button>
               <el-button type="danger" size="small" @click="showDialog=true">
                 <el-icon><delete /></el-icon>
               </el-button>
@@ -142,7 +216,7 @@ onMounted(() => {
           </el-table-column>
         </el-table>
         <el-pagination
-          :page-size="7"
+          :page-size="10"
           layout="prev, pager, next"
           :total="totalSize"
           v-model:current-page="currentPageNum"
@@ -163,22 +237,22 @@ onMounted(() => {
       </el-dialog>
       <el-dialog v-model="editDialog" width="50%">
         <div class="py-5 pr-5">
-          <el-form :model="editForm" label-width="100px">
-            <el-form-item label="商品名">
+          <el-form :model="editForm" label-width="100px" ref="ruleFormRef" :rules="rules">
+            <el-form-item label="商品名" prop="proName">
               <el-input v-model="editForm.proName" />
             </el-form-item>
-            <el-form-item label="商品库存量">
+            <el-form-item label="商品库存量" prop="shock">
               <el-input v-model="editForm.stock" />
             </el-form-item>
-            <el-form-item label="商品价格">
+            <el-form-item label="商品价格" prop="price">
               <el-input v-model="editForm.price" />
             </el-form-item>
             <el-form-item label="商品描述">
               <el-input v-model="editForm.proDesc" type="textarea" />
             </el-form-item>
              <el-form-item>
-              <el-button type="primary" @click="editDialog = false">确定</el-button>
-              <el-button @click="editDialog = false">取消</el-button>
+              <el-button type="primary" @click="onSubmit(ruleFormRef)">确定</el-button>
+              <el-button @click="onCancel">取消</el-button>
             </el-form-item>
           </el-form>
         </div>

@@ -3,26 +3,95 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-02 11:29:59
+ * @LastEditTime: 2022-06-05 15:36:38
 -->
 <script setup lang="ts">
-import myHeader from '@/components/header.vue'
 import { saveProduct } from '@/api/product'
+import { uploadImg } from '@/api/file'
 import { ref,reactive } from 'vue'
-import axios from 'axios'
+import type { UploadProps, UploadUserFile } from 'element-plus'
+import type { FormInstance } from 'element-plus'
 const addForm = reactive({
   proName:'',
   stock: '',
   price: '',
-  proDesc: ''
+  proDesc: '',
+  imgUrl: ''
 })
-const addProduct = () => {
-  console.log(addForm)
-  saveProduct(addForm).then((res) => {
-    if(res.code === 200) {
-      console.log('新增成功')
+const ruleFormRef = ref<FormInstance>()
+const checkStock = (rule: any, value: any, callback: any) => {
+  if(value === '') {
+    callback(new Error('请输入商品库存量'))
+  } else {
+    if(!/^[0-9]*$/.test(value)) {
+      callback(new Error('请输入正整数'))
+    } else {
+      callback()
     }
-  })
+  }
+}
+//重置文本框
+const resetForm = (formEl: FormInstance | undefined) => {
+  addForm.proName = ''
+  addForm.stock = ''
+  addForm.price = ''
+  addForm.proDesc = ''
+  addForm.imgUrl = ''
+  fileList.value.length = 0
+}
+
+const checkPrice = (rule: any, value: any, callback: any) => {
+  if(value === '') {
+    callback(new Error('请输入商品价格'))
+  } else {
+    if(!/^(([0-9]+\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\.[0-9]+)|([0-9]*[1-9][0-9]*))$/.test(value)) {
+      callback(new Error('请输入正确的价格'))
+    } else {
+      callback()
+    }
+  }
+}
+const rules = reactive({
+  proName: [
+    {required: true, message: '商品名不能为空！', trigger: 'blur'}
+  ],
+  stock: [{ validator: checkStock, trigger: 'blur' }],
+  price: [{ validator: checkPrice, trigger: 'blur' }]
+})
+const addProduct = async(formEl: FormInstance | undefined) => {
+  if(!formEl) return
+  const valid = await formEl.validate()
+  console.log(valid)
+  if(valid) { //校验成功
+    if(fileList.value.length!==0) {
+      const formData = new FormData()
+      formData.append("imgFile",fileList.value[0].raw)
+        uploadImg(formData).then((res: any) => {
+        console.log(res)
+      })
+      addForm.imgUrl = 'http://localhost:9090/static/' + fileList.value[0].name
+    }
+    saveProduct(addForm).then((res: any) => {
+      if(res.code === 200) {
+        console.log('新增成功')
+      }
+    })
+   } else {
+     console.log('表单校验失败')
+   }
+}
+const fileList = ref<UploadUserFile[]>([])
+const dialogImageUrl = ref('')
+const dialogVisible = ref(false)
+const handleRemove: UploadProps['onRemove'] = (uploadFile, uploadFiles) => {
+  console.log(uploadFile, uploadFiles)
+}
+const handlePictureCardPreview: UploadProps['onPreview'] = (uploadFile) => {
+  dialogImageUrl.value = uploadFile.url!
+  dialogVisible.value = true
+}
+const handleChange: UploadProps['onPreview'] = (uploadFile) => {
+  dialogImageUrl.value = uploadFile.url!
 }
 </script>
 
@@ -37,26 +106,44 @@ const addProduct = () => {
         添加商品
       </div>
       <div class="py-5 pr-5">
-        <el-form :model="addForm" label-width="100px">
-          <el-form-item label="商品名">
+        <el-form :model="addForm" label-width="100px" ref="ruleFormRef" :rules="rules">
+          <el-form-item label="商品名" prop="proName">
             <el-input v-model="addForm.proName" />
           </el-form-item>
-          <el-form-item label="商品库存量">
+          <el-form-item label="商品库存量" prop="stock">
             <el-input v-model="addForm.stock" />
           </el-form-item>
-          <el-form-item label="商品价格">
+          <el-form-item label="商品价格" prop="price">
             <el-input v-model="addForm.price" />
           </el-form-item>
           <el-form-item label="商品描述">
             <el-input v-model="addForm.proDesc" type="textarea" />
           </el-form-item>
+          <el-form-item label="商品图片">
+            <el-upload
+              :action="'http://localhost:9090/file/addArticle'"
+              list-type="picture-card"
+              :on-remove="handleRemove"
+              :file-list="fileList"
+              :on-change="handleChange"
+              :on-preview="handlePictureCardPreview"
+              :limit="1"
+              :auto-upload="false"
+              name="imgFile"
+            >
+              <el-icon><Plus /></el-icon>
+            </el-upload>
+          </el-form-item>
            <el-form-item>
-            <el-button type="primary" @click="addProduct">添加</el-button>
-            <el-button>取消</el-button>
+            <el-button type="primary" @click="addProduct(ruleFormRef)">添加</el-button>
+            <el-button @click="resetForm">取消</el-button>
           </el-form-item>
         </el-form>
       </div>
     </div>
+    <el-dialog v-model="dialogVisible">
+      <img w-full :src="dialogImageUrl" alt="Preview Image" />
+    </el-dialog>
   </div>
 </template>
 <style scoped>

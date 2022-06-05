@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-01 11:29:59
+ * @LastEditTime: 2022-06-04 17:03:37
 -->
 <script setup lang="ts">
 import myHeader from '@/components/header.vue'
@@ -79,11 +79,10 @@ const tableData = [
               <span v-if="scope.row.status===3">已取消</span>
             </template>
           </el-table-column>
-          <el-table-column prop="action" label="操作">
+          <el-table-column prop="action" label="操作" align="center">
             <template #default="scope">
               <el-button type="primary" size="small" plain v-if="scope.row.status===0">确认</el-button>
               <el-button type="warning" size="small" plain v-if="scope.row.status===0">拒绝</el-button>
-              <el-button type="danger" size="small" plain>删除</el-button>
             </template>
           </el-table-column>
         </el-table>

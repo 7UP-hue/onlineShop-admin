@@ -3,10 +3,11 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:06:27
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-03 21:30:10
+ * @LastEditTime: 2022-06-05 15:01:20
  */
 import { HomeFilled } from '@element-plus/icons-vue/dist/types'
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import store from "@/store"
 import manage from '@/pages/manage.vue'
 import mainPage from '@/pages/home.vue'
@@ -16,7 +17,7 @@ import addShop from '@/pages/addShop/index.vue'
 import editUser from '@/pages/edit/index.vue'
 import editShop from '@/pages/edit/editShop.vue'
 import login from '@/pages/login.vue'
-import { getToken } from '@/utils/cookies'
+import { getToken, getName } from '@/utils/cookies'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '',
@@ -101,10 +102,13 @@ const router = createRouter({
 //路由前置守卫
 router.beforeEach((to, from ,next) => {
   if(to.path !== '/login' && to.path !== '/404') {
-    const userInfo = store.getters.userInfo
-    const cookie = userInfo.token
-    console.log(userInfo)
-    if(cookie === null || cookie === '') {
+    const token = String(getToken())
+    console.log(token)
+    if(token === null || token === '' || token === 'undefined') {
+      ElMessage({
+        message: '登录状态错误',
+        type: 'error'
+      })
       router.push("/login")
       // next()
     } else {

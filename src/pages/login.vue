@@ -1,16 +1,18 @@
 <script lang="ts" setup>
 import { reactive, ref } from 'vue'
 import type { FormInstance } from 'element-plus'
-import { ElMessage } from 'element-plus'
-import { userLogin } from '@/api/user'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+const router = useRouter()
+const store = useStore()
 //重置文本框
 const resetForm = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   formEl.resetFields()
 }
 const loginFormdata = ref({
-  username: '',
-  password: ''
+  shopName: '',
+  shopPsd: ''
 })
 const ruleFormRef = ref<FormInstance>()
 const login = async(formEl: FormInstance | undefined) => {
@@ -19,11 +21,7 @@ const login = async(formEl: FormInstance | undefined) => {
   await formEl.validate((valid, fields) => {
     //校验成功
     if(valid) {
-      // userLogin(loginFormdata).then((res: any) => {
-      //   if(res.code === 200) {
-          
-      //   }
-      // })
+      store.dispatch('login',loginFormdata.value)
     }
   })
   
@@ -31,11 +29,11 @@ const login = async(formEl: FormInstance | undefined) => {
 const show_down = ref(true)
 //校验规则
 const rules = reactive({
-  username: [
+  shopName: [
     {required: true, message: '用户名不能为空！', trigger: 'blur'},
-    {min: 4, max: 12, message: '长度在 4 到 12 个字符', trigger: 'blur'}
+    {min: 2, max: 12, message: '长度在 2 到 12 个字符', trigger: 'blur'}
   ],
-  password: [
+  shopPsd: [
     {required: true, message: '密码不能为空！', trigger: 'blur'},
     {min: 3, max: 18, message: '长度在 3 到 18 个字符', trigger: 'blur'}
   ]
@@ -66,11 +64,11 @@ const changeArm = (flag: number) =>  {
           :model="loginFormdata"
           :rules="rules"
         >
-          <el-form-item prop="username">
-            <el-input v-model.trim="loginFormdata.username" placeholder="用户名" :prefix-icon="User"/>
+          <el-form-item prop="shopName">
+            <el-input v-model.trim="loginFormdata.shopName" placeholder="用户名" :prefix-icon="User"/>
           </el-form-item>
-          <el-form-item prop="password">
-            <el-input @focus="changeArm(1)" @blur="changeArm(0)" v-model.trim="loginFormdata.password" placeholder="密码" :prefix-icon="Unlock" type="password" show-password />
+          <el-form-item prop="shopPsd">
+            <el-input @focus="changeArm(1)" @blur="changeArm(0)" v-model.trim="loginFormdata.shopPsd" placeholder="密码" :prefix-icon="Unlock" type="password" show-password />
           </el-form-item>
           <div>
             <el-button type="primary" @click="login(ruleFormRef)">登录</el-button>
