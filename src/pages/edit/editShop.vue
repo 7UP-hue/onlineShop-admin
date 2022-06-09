@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-04 19:07:22
+ * @LastEditTime: 2022-06-05 19:41:27
 -->
 <script setup lang="ts">
 import myHeader from '@/components/header.vue'
@@ -90,7 +90,7 @@ onMounted(() => {
             <el-input v-model="editForm.shopAddr" />
           </el-form-item>
           <el-form-item label="描述">
-            <el-input v-model="editForm.shopDesc"  type="textarea"/>
+            <el-input v-model="editForm.shopDesc" type="textarea"/>
           </el-form-item>
            <el-form-item>
             <el-button type="primary" @click="onSubmit(ruleFormRef)">确定</el-button>

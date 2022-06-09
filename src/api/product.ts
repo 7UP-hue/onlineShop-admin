@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-06-02 11:25:09
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-05 16:17:03
+ * @LastEditTime: 2022-06-06 16:45:27
  */
 import request from '@/utils/request'
 
@@ -28,5 +28,13 @@ export function updateProduct(data: any) {
     method: 'post',
     url: '/product/editProduct',
     data: data
+  })
+}
+
+export function deleteProduct(data: any) {
+  return request({
+    method: 'get',
+    url: 'product/deleteProduct',
+    params: data
   })
 }

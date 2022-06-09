@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-05 15:36:38
+ * @LastEditTime: 2022-06-09 15:04:57
 -->
 <script setup lang="ts">
 import { saveProduct } from '@/api/product'
@@ -11,6 +11,8 @@ import { uploadImg } from '@/api/file'
 import { ref,reactive } from 'vue'
 import type { UploadProps, UploadUserFile } from 'element-plus'
 import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
+import myHeader from '@/components/header.vue'
 const addForm = reactive({
   proName:'',
   stock: '',
@@ -31,7 +33,7 @@ const checkStock = (rule: any, value: any, callback: any) => {
   }
 }
 //重置文本框
-const resetForm = (formEl: FormInstance | undefined) => {
+const resetForm = () => {
   addForm.proName = ''
   addForm.stock = ''
   addForm.price = ''
@@ -73,7 +75,18 @@ const addProduct = async(formEl: FormInstance | undefined) => {
     }
     saveProduct(addForm).then((res: any) => {
       if(res.code === 200) {
+        ElMessage({
+          message: '添加成功',
+          type: 'success'
+        })
+        resetForm()
         console.log('新增成功')
+      } else {
+        ElMessage({
+          message: '添加失败',
+          type: 'error'
+        })
+        resetForm()
       }
     })
    } else {

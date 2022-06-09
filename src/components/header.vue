@@ -3,7 +3,7 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:49:57
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-02 14:23:51
+ * @LastEditTime: 2022-06-09 15:05:59
 -->
 <script setup lang="ts">
 
@@ -15,7 +15,7 @@
   >
     <div class="ml-240px h-60px flex justify-between items-center text-white px-3" style="background: rgba(28,43,54,.9);">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-           <el-breadcrumb-item :to="{path: '/'}" class="text-white">
+           <el-breadcrumb-item :to="{path: '/home'}" class="text-white">
               <span class="text-white">首页</span>
             </el-breadcrumb-item>
            <el-breadcrumb-item v-for="(item, index) in $route.meta.title" :key="index">
@@ -29,9 +29,9 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item><span @click="$router.push('/manage');">首页</span></el-dropdown-item>
-              <el-dropdown-item><span @click="$router.push('/edit');">编辑</span></el-dropdown-item>
-              <el-dropdown-item><span @click="$router.push('/login');">退出</span></el-dropdown-item>
+              <el-dropdown-item><span @click="$router.push('/home');">首页</span></el-dropdown-item>
+              <el-dropdown-item><span @click="$router.push('/editShop');">编辑</span></el-dropdown-item>
+              <el-dropdown-item><span @click="$router.push('/');">退出</span></el-dropdown-item>
             </el-dropdown-menu>
           </template>
       </el-dropdown>

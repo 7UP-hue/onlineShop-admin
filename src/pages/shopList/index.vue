@@ -3,12 +3,12 @@
  * @Author: 刘晴
  * @Date: 2022-05-30 11:15:44
  * @LastEditors: 刘晴
- * @LastEditTime: 2022-06-05 16:43:22
+ * @LastEditTime: 2022-06-06 16:43:42
 -->
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 import myHeader from '@/components/header.vue'
-import { getProduct, updateProduct } from '@/api/product'
+import { getProduct, updateProduct, deleteProduct } from '@/api/product'
 import type { FormInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
 interface ProductList {
@@ -37,7 +37,8 @@ const searchQuery = reactive({
     pageSize: 10,
     proName: '',
     proId: '',
-    createTime: ''
+    createTime: '',
+    type: 'admin'
   }
 )
 const totalSize = ref()
@@ -122,6 +123,7 @@ const onSubmit = async(formEl: FormInstance | undefined) => {
             message: '编辑成功',
             type: 'success'
           })
+          getProList()
           editDialog.value = false
         } else {
           ElMessage({
@@ -133,8 +135,30 @@ const onSubmit = async(formEl: FormInstance | undefined) => {
     }
   })
 }
+const checkProId = ref('')
+const showDelete = (proId: any) => {
+  checkProId.value = proId
+  showDialog.value = true
+}
 const onCancel = () => {
   editDialog.value = false
+}
+const onDelete = () => {
+  deleteProduct({proId: checkProId.value}).then((res: any) => {
+    if(res.code === 200) {
+      ElMessage({
+        message: '操作成功',
+        type: 'success'
+      })
+      getProList()
+    } else {
+      ElMessage({
+        message: '操作失败',
+        type: 'error'
+      })
+    }
+    showDialog.value = false
+  })
 }
 onMounted(() => {
   getProList()
@@ -181,7 +205,7 @@ onMounted(() => {
                     <span>商品图片</span>
                     <img :src="props.row.imgUrl">
                   </div>
-                  <div class="mr-5">
+                  <div class="ml-10">
                     <div>版型款式</div>
                     <div>
                       <span>袖长：短袖</span>
@@ -209,7 +233,7 @@ onMounted(() => {
           <el-table-column prop="action" label="操作" align="center">
             <template #default="scope">
               <el-button type="primary" size="small" @click="editProduct(scope.row)"><el-icon><edit /></el-icon></el-button>
-              <el-button type="danger" size="small" @click="showDialog=true">
+              <el-button type="danger" size="small" @click="showDelete(scope.row.proId)">
                 <el-icon><delete /></el-icon>
               </el-button>
             </template>
@@ -225,13 +249,11 @@ onMounted(() => {
         />
       </div>
       <el-dialog v-model="showDialog" width="30%">
-        确定要删除此商品吗？
+        确定下架该商品吗？
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="showDialog = false">取消</el-button>
-            <el-button type="primary" @click="showDialog = false"
-              >确定</el-button
-            >
+            <el-button type="primary" @click="onDelete()">确定</el-button>
           </span>
         </template>
       </el-dialog>
