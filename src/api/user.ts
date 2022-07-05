@@ -42,3 +42,31 @@ export function editShopInfo(data: any) {
     data: data
   })
 }
+
+export function getTotalMsg() {
+  return request({
+    method: 'get',
+    url: '/shopTotal/getMsg'
+  })
+}
+
+export function getTodayMsg() {
+  return request({
+    method: 'get',
+    url: '/visitor/todayMsg'
+  })
+}
+
+export function getWeekMsg() {
+  return request({
+    method: 'get',
+    url: '/visitor/weekMsg'
+  })
+}
+
+export function getMonthMsg() {
+  return request({
+    method: 'get',
+    url: '/visitor/monthMsg'
+  })
+}
