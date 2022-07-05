@@ -5,13 +5,24 @@
  * @LastEditors: 刘晴
  * @LastEditTime: 2022-05-30 20:00:14
 -->
-<script setup lange="ts">
-import { onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { getWeekMsg } from '@/api/user'
 import * as echarts from 'echarts'
+interface TableData {
+  date: Array<String>,
+  onlyLook: Array<Number>,
+  lookAndBuy: Array<Number>
+}
+const tableDate: TableData = reactive({
+  date: [],
+  onlyLook: [],
+  lookAndBuy: []
+})
 const option = {
   angleAxis: {
     type: 'category',
-    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    data: tableDate.date
   },
   color: ['#5470C6','#43eec6'],
   tooltip: {
@@ -22,7 +33,7 @@ const option = {
   series: [
     {
       type: 'bar',
-      data: [1, 2, 3, 4, 3, 5, 1],
+      data: tableDate.onlyLook,
       coordinateSystem: 'polar',
       name: '仅浏览',
       stack: 'a',
@@ -32,7 +43,7 @@ const option = {
     },
     {
       type: 'bar',
-      data: [2, 4, 6, 1, 3, 2, 1],
+      data: tableDate.lookAndBuy,
       coordinateSystem: 'polar',
       name: '浏览且购买',
       stack: 'a',
@@ -51,7 +62,14 @@ const option = {
 const visitorChart = ref()
 onMounted(() => {
   var myChart = echarts.init(visitorChart.value)
-  myChart.setOption(option)
+  getWeekMsg().then((res: any) => {
+    res.rows.forEach((val: any) => {
+      tableDate.date.push(val.date)
+      tableDate.onlyLook.push(val.onlyLook)
+      tableDate.lookAndBuy.push(val.lookAndBuy)
+      myChart.setOption(option)
+    })
+  })
   window.onresize = function () {
     myChart.resize()
   }

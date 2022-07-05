@@ -1,21 +1,17 @@
-<script setup lange="ts">
-import { onMounted, ref } from 'vue'
+<script setup lang="ts">
+import { onMounted, reactive, ref } from 'vue'
+import { getMonthMsg } from '@/api/user'
 import * as echarts from 'echarts'
-let category = [];
-let dottedBase = +new Date();
-let lineData = [];
-let barData = [];
-for (let i = 0; i < 20; i++) {
-  let date = new Date((dottedBase += 3600 * 24 * 1000));
-  category.push(
-    [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-')
-  );
-  let b = Math.random() * 200;
-  let d = Math.random() * 200;
-  barData.push(b);
-  lineData.push(d + b);
+interface TableData {
+  date: Array<String>,
+  sales: Array<String>,
+  orderCnt: Array<number>,
 }
-// option
+const tableData: TableData = reactive({
+  date: [],
+  sales: [],
+  orderCnt: []
+})
 const option = {
   backgroundColor: '#fff',
   grid: {
@@ -32,13 +28,13 @@ const option = {
     }
   },
   legend: {
-    data: ['line', 'bar'],
+    data: ['订单数', '销售额'],
     textStyle: {
       color: '#ccc'
     }
   },
   xAxis: {
-    data: category,
+    data: tableData.date,
     axisLine: {
       lineStyle: {
         color: '#333'
@@ -55,16 +51,16 @@ const option = {
   },
   series: [
     {
-      name: 'line',
+      name: '销售额',
       type: 'line',
       smooth: true,
       showAllSymbol: true,
       symbol: 'emptyCircle',
       symbolSize: 15,
-      data: lineData
+      data: tableData.sales
     },
     {
-      name: 'bar',
+      name: '订单数',
       type: 'bar',
       barWidth: 10,
       itemStyle: {
@@ -74,10 +70,10 @@ const option = {
           { offset: 1, color: '#43eec6' }
         ])
       },
-      data: barData
+      data: tableData.orderCnt
     },
     {
-      name: 'line',
+      name: '销售额',
       type: 'bar',
       barGap: '-100%',
       barWidth: 10,
@@ -89,7 +85,7 @@ const option = {
         ])
       },
       z: -12,
-      data: lineData
+      data: tableData.sales
     },
     {
       name: 'dotted',
@@ -102,14 +98,22 @@ const option = {
       symbolSize: [12, 4],
       symbolMargin: 1,
       z: -10,
-      data: lineData
+      data: tableData.sales
     }
   ]
 };
 const orderChart = ref()
 onMounted(() => {
   var myChart = echarts.init(orderChart.value)
-  myChart.setOption(option)
+  getMonthMsg().then((res: any) => {
+    console.log(res)
+    res.rows.forEach((val: any) => {
+      tableData.date.push(val.date)
+      tableData.sales.push(val.sales)
+      tableData.orderCnt.push(val.orderCnt*5)
+    })
+    myChart.setOption(option)
+  })
   window.onresize = function () {
     myChart.resize()
   }

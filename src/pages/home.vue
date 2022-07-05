@@ -7,6 +7,29 @@
 -->
 <script setup lang="ts">
 import myHeader from '@/components/header.vue'
+import { getTotalMsg, getTodayMsg } from '@/api/user'
+import { onMounted, reactive } from 'vue'
+const totalMsg = reactive({
+  newOrder: '',
+  totalOrder: '',
+  newSales: '',
+  totalSales: ''
+})
+onMounted(() => {
+  getTotalMsg().then((res: any) => {
+    if(res.code === 200) {
+      totalMsg.totalOrder = res.data.totalOrder
+      totalMsg.totalSales = res.data.totalSales
+    }
+  })
+  getTodayMsg().then((res: any) => {
+    if(res.code === 200) {
+      totalMsg.newOrder = res.data.orderCnt
+      totalMsg.newSales = res.data.sales
+      console.log(totalMsg)
+    }
+  })
+})
 </script>
 
 <template>
@@ -18,16 +41,16 @@ import myHeader from '@/components/header.vue'
       <div class="text-left text-xl ml-3">统计</div>
       <div class="flex justify-between mt-3 mx-3">
         <span class="adminMsg">
-          新增订单<div class="digit">2022</div>
+          新增订单<div class="digit">{{totalMsg.newOrder}}</div>
         </span>
         <span class="adminMsg">
-          总订单<div class="digit">2022</div>
+          总订单<div class="digit">{{totalMsg.totalOrder}}</div>
         </span>
         <span class="adminMsg">
-          新增销售额<div class="digit">2022</div>
+          新增销售额<div class="digit">{{totalMsg.newSales}}</div>
         </span>
         <span class="adminMsg">
-          总销售额<div class="digit">2022</div>
+          总销售额<div class="digit">{{totalMsg.totalSales}}</div>
         </span>
       </div>
       <div class="flex justify-between h-400px mx-3 mt-8">
